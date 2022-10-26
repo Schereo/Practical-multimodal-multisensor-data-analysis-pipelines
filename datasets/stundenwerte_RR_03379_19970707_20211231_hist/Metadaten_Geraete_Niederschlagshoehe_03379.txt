@@ -1,0 +1,4 @@
+Stations_ID;Stationsname;Geo. Laenge [Grad];Geo. Breite [Grad];Stationshoehe [m];Geberhoehe ueber Grund [m];Von_Datum;Bis_Datum;Geraetetyp Name;Messverfahren;eor;
+3379;München-Stadt;11.54;48.16;515.37;1.5;19970708;20171012;PLUVIO;Niederschlagsmenge, elektr.;eor;
+3379;München-Stadt;11.54;48.16;515.37;1.5;20171013;20220322;rain[e]H3, Wägetechnologie;Niederschlagsmenge, elektr.;eor;
+generiert: 30.03.2022 --  Deutscher Wetterdienst  --

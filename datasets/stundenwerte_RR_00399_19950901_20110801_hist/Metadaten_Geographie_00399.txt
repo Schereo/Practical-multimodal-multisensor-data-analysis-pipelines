@@ -1,0 +1,3 @@
+Stations_id;Stationshoehe;Geogr.Breite;Geogr.Laenge;von_datum;bis_datum;Stationsname
+   399;   35.80; 52.5205; 13.4105;19690101;20150630;Berlin-Alexanderplatz
+   399;   35.80; 52.5198; 13.4057;20150701;        ;Berlin-Alexanderplatz
