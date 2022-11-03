@@ -1,4 +1,0 @@
-Stations_id;Stationshoehe;Geogr.Breite;Geogr.Laenge;von_datum;bis_datum;Stationsname
-  3791;   11.00; 53.1752;  8.1810;19680101;19980930;Oldenburg
-  3791;   11.00; 53.1752;  8.1810;19981001;20071014;Oldenburg
-  3791;   11.00; 53.1763;  8.1824;20071015;20121001;Oldenburg

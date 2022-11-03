@@ -1,3 +1,0 @@
-Stations_ID;Stationsname;Von_Datum;Bis_Datum
-  3379;München (Bavariaring)                   ;19540528;19970707
-  3379;München-Stadt                           ;19970708;
