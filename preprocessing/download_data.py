@@ -10,6 +10,8 @@ def get_data():
     if not os.path.exists('../data'):
         _download_data()
         _unzip_files()
+    else:
+        print('Data already downloaded')
     return _create_dataframes()
 
 def _download_data():
@@ -50,4 +52,7 @@ def _create_dataframes():
     oldenburg_df.columns = oldenburg_df.columns.str.strip()
     munich_df.columns = munich_df.columns.str.strip()
     berlin_df.columns = berlin_df.columns.str.strip()
+    oldenburg_df.index.name = 'Oldenburg'
+    munich_df.index.name = 'Munich'
+    berlin_df.index.name = 'Berlin'
     return oldenburg_df, munich_df, berlin_df
