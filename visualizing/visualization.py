@@ -1,5 +1,7 @@
 from pathlib import Path
 from matplotlib import pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 def print_stats(name, df):
     print()
@@ -14,6 +16,7 @@ def visualize_data(df1, df2, df3, show=False):
     Path("visualizations/Munich").mkdir(parents=True, exist_ok=True)
     Path("visualizations/Berlin").mkdir(parents=True, exist_ok=True)
     Path("visualizations/combined").mkdir(parents=True, exist_ok=True)
+    _histogram(df1, df2, df3)
     _visualize_full_data(df1)
     _visualize_full_data(df2)
     _visualize_full_data(df3)
@@ -95,3 +98,23 @@ def _visualize_combined_data(df1, df2, df3, show=False):
         plt.show()
     plt.savefig(f'visualizations/combined/percipitation.png')
     plt.clf()
+
+def _histogram(df1, df2, df3):
+    fig, axs = plt.subplots(2, 2, figsize=(7, 7))
+    histo1 = sns.histplot(df1['R1'].rename(df1.index.name),color='blue', stat='percent', ax=axs[0, 0], legend=True, label='Test')
+    histo2 = sns.histplot(df2['R1'].rename(df2.index.name),color='red', stat='percent', ax=axs[0, 1], label='Test' )
+    histo3 = sns.histplot(df3['R1'].rename(df3.index.name),color='green', stat='percent', ax=axs[1, 0], label='Test')
+
+    concat_df = pd.concat([df1['R1'].rename(df1.index.name), df2['R1'].rename(df2.index.name), df3['R1'].rename(df3.index.name)], axis=1).reset_index()
+    print(concat_df.head())
+    histo4 = sns.histplot((concat_df['Oldenburg'], concat_df['Munich'], concat_df['Berlin']), stat='percent', ax=axs[1, 1], legend=True)
+    histo1.set_yscale('log')
+    histo2.set_yscale('log')
+    histo3.set_yscale('log')
+    histo4.set_yscale('log')
+    
+    fig.suptitle('Precipitation in mm')
+    fig.tight_layout()
+    plt.savefig(f'visualizations/combined/histogram.png')
+    plt.clf()
+
