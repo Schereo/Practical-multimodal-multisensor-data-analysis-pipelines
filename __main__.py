@@ -1,3 +1,5 @@
+from forecasting.arma import arma
+from forecasting.linear_regression import linear_regression
 from preprocessing.download_data import get_data
 from preprocessing.clean_data import preprocess
 from visualizing.visualization import print_stats, visualize_data
@@ -18,8 +20,11 @@ if debug:
     print_stats('Berlin (err removed)', berlin_df)
     print_stats('Munich (err removed)', munich_df)
 
+# arma(oldenburg_df)
+linear_regression(oldenburg_df, berlin_df, munich_df)
+# visualize_data(oldenburg_df, berlin_df, munich_df)
 
-visualize_data(oldenburg_df, berlin_df, munich_df)
+
 
 
 

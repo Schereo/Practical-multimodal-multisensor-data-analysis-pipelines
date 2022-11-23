@@ -42,3 +42,11 @@ def _trim_data_to_same_time(df1, df2, df3):
     df3 = df3[(df3['MESS_DATUM'] >= '1998-09-30 12:00:00') &
               (df3['MESS_DATUM'] <= '2011-07-31 23:00:00')]
     return df1, df2, df3
+
+def sum_up_to_days(df1):
+    # sum up all values to days
+    df1 = df1[['MESS_DATUM', 'R1']]
+    df1.index = df1['MESS_DATUM']
+    del df1['MESS_DATUM']
+    df1 = df1.resample('D').sum()
+    return df1

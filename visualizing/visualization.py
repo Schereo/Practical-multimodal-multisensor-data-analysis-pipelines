@@ -221,3 +221,6 @@ def _monthly_summed_precipitation(df1, df2, df3):
     fig.tight_layout()
     plt.savefig(f'visualizations/combined/monthly_avg_percipitation.png')
     plt.clf()
+
+
+

@@ -27,3 +27,6 @@ Code for the module `inf 378 Practical multimodal-multisensor data analysis pipe
     1. How many clusters can be identified?
     2. Do the clusters differ between cities?
 3. How related is the precipitation of Oldenburg, Munich and Berlin?
+
+# Ideas
+poisson distribution?
