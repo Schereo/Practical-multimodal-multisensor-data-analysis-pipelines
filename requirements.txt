@@ -2,3 +2,5 @@ matplotlib
 seaborn
 numpy
 pandas
+sklearn
+torch

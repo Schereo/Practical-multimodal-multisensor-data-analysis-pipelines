@@ -10,10 +10,10 @@ def visuzalize_forecasting(df1, df2, df3):
 
 def plot_linear_regression(df, slope, intercept, predictions, y):
     f, ax = plt.subplots()
-    plt.figure(figsize=(20, 8))
-    plt.text(0.4, 1.5, f'slope: {round(slope, 6)} \n intercept: {round(intercept, 3)}', horizontalalignment='center', verticalalignment='center', transform = ax.transAxes)
-    plt.scatter(df.index, y,c='black')
-    plt.plot(df.index, predictions, c='blue', linewidth=2)
+    f.set_size_inches(20, 8)
+    ax.text(0.5, 0.5, f'slope: {round(slope, 6)} \n intercept: {round(intercept, 3)}', horizontalalignment='center', verticalalignment='center', transform = ax.transAxes)
+    ax.scatter(df.index, y,c='black')
+    ax.plot(df.index, predictions, c='blue', linewidth=2)
     plt.title('Linear Regression')
     plt.ylabel('Precipitation (mm)')
     plt.xlabel('Days of the year')

@@ -30,3 +30,6 @@ Code for the module `inf 378 Practical multimodal-multisensor data analysis pipe
 
 # Ideas
 poisson distribution?
+
+# Issues
+- LSTM output is constant and not changing when input features change

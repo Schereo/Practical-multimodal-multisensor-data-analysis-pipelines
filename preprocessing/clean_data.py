@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -12,6 +13,9 @@ def preprocess(df1, df2, df3):
     df2 = _convert_to_datetime(df2)
     df3 = _convert_to_datetime(df3)
     df1, df2, df3 = _trim_data_to_same_time(df1, df2, df3)
+    df1 = _interpolate_missing_hours(df1)
+    df2 = _interpolate_missing_hours(df2)
+    df3 = _interpolate_missing_hours(df3)
     return df1, df2, df3
 
 
@@ -43,10 +47,14 @@ def _trim_data_to_same_time(df1, df2, df3):
               (df3['MESS_DATUM'] <= '2011-07-31 23:00:00')]
     return df1, df2, df3
 
-def sum_up_to_days(df1):
-    # sum up all values to days
+def _interpolate_missing_hours(df1):
     df1 = df1[['MESS_DATUM', 'R1']]
     df1.index = df1['MESS_DATUM']
     del df1['MESS_DATUM']
-    df1 = df1.resample('D').sum()
+    df1 = df1.resample('H').mean()
+    df1['R1'] = df1['R1'].interpolate() # interpolate missing values linearly
+    return df1
+
+def sum_up_to_days(df1):
+    df1 = df1.resample('D')
     return df1
