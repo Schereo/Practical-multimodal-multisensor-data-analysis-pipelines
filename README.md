@@ -1,6 +1,12 @@
 # Practical-multimodal-multisensor-data-analysis-pipelines
 Code for the module `inf 378 Practical multimodal-multisensor data analysis pipelines`
 
+## Prerequisites
+- Python 3.9 or higher
+- Install requirements with `pip install -r requirements.txt`
+## Usage
+- Run all scripts `python3 main.py`
+- Run a specific script `python3 main.py [--lstm] [--regression] [--correlation]`
 ## Description of variables
 
 - STATIONS_ID: ID of the station
