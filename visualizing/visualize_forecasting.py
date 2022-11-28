@@ -14,4 +14,7 @@ def plot_linear_regression(df, slope, intercept, predictions, y):
     plt.title('Linear Regression')
     plt.ylabel('Precipitation (mm)')
     plt.xlabel('Days of the year')
-    plt.show()
+    plt.savefig(
+        f'visualizations/forecasting/linear_regression{df.index.name}_.png')
+    plt.clf()
+    # plt.show()

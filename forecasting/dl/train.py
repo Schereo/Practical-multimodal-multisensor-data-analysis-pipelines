@@ -1,6 +1,7 @@
 
 
 import pandas as pd
+from os import path
 import torch
 from torch import nn
 from forecasting.dl.dataset import SequenceDataset
@@ -16,7 +17,6 @@ batch_size = 32
 def lstm(d1):
     # split df1 into 20/80 datasets
     train_size = int(len(d1) * 0.8)
-    test_size = len(d1) - train_size
     train, test = d1.iloc[0:train_size], d1.iloc[train_size:len(d1)]
 
     target = "R1"
@@ -39,16 +39,21 @@ def lstm(d1):
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    print("Untrained test\n--------")
-    test_model(test_loader, model, loss_function)
-    print()
 
-    for ix_epoch in range(5):
-        print(f"Epoch {ix_epoch}\n---------")
-        train_model(train_loader, model, loss_function, optimizer=optimizer)
-        # test_model(test_loader, model, loss_function)
+    if not path.exists('output/models/lstm'):
+        print("Untrained test\n--------")
+        test_model(test_loader, model, loss_function)
         print()
 
+        for ix_epoch in range(3):
+            print(f"Epoch {ix_epoch}\n---------")
+            train_model(train_loader, model, loss_function, optimizer=optimizer)
+            # test_model(test_loader, model, loss_function)
+            print()
+
+        torch.save(model.state_dict(), f"output/models/lstm")
+
+    model.load_state_dict(torch.load(f"output/models/lstm"))
     train_eval_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
 
     ystar_col = "Model forecast"
@@ -63,7 +68,7 @@ def lstm(d1):
 
     print(df_out)
     # save df_out to csv
-    df_out.to_csv('lstm_out.csv')
+    df_out.to_csv('output/lstm_out.csv')
 
 def train_model(data_loader, model, loss_function, optimizer):
     num_batches = len(data_loader)

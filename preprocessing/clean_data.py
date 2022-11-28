@@ -59,5 +59,5 @@ def _interpolate_missing_hours(df1):
     return df1
 
 def sum_up_to_days(df1):
-    df1 = df1.resample('D')
+    df1 = df1.resample('D').sum()
     return df1

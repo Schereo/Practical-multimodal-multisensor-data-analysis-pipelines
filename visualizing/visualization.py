@@ -31,7 +31,7 @@ def _visualize_full_data(df, show=False):
     plt.xlabel('Date')
     plt.ylabel('Precipitation in mm')
     plt.title(f'Precipitation in mm in {df.index.name}')
-    plt.plot(df['MESS_DATUM'], df['R1'])
+    plt.plot(df.index, df['R1'])
     if show:
         plt.show()
     plt.savefig(f'visualizations/{df.index.name}/percipitation_full.png')
@@ -40,15 +40,16 @@ def _visualize_full_data(df, show=False):
 
 def _visualize_data_years_seperated(df, show=False):
     # get the first and last row of the dataframe
-    fist_year = df.iloc[0]['MESS_DATUM'].year
-    last_year = df.iloc[-1]['MESS_DATUM'].year
+    first_year = df.iloc[0].index
+    print('index', first_year)
+    last_year = df.iloc[-1].index.year
     min_year, max_year = _get_year_with_least_and_most_precipitation(df)
-    for year in range(fist_year, last_year):
+    for year in range(first_year, last_year):
         plt.xlabel('Date')
         plt.ylabel('Precipitation in mm')
         plt.title(f'Precipitation in mm in {df.index.name} in {year}')
-        plt.plot(df[df['MESS_DATUM'].dt.year == year]['MESS_DATUM'],
-                 df[df['MESS_DATUM'].dt.year == year]['R1'])
+        plt.plot(df[df.index.year == year]['MESS_DATUM'],
+                 df[df.index.year == year]['R1'])
         if show:
             plt.show()
         if (year == min_year):
@@ -66,10 +67,10 @@ def _overlay_year_with_least_and_most_percipitation(df1, least_year, most_year):
     plt.xlabel('Date')
     plt.ylabel('Precipitation in mm')
     plt.title(f'Precipitation in mm in {df1.index.name}')
-    plt.plot(df1[df1['MESS_DATUM'].dt.year == least_year]['MESS_DATUM'].dt.dayofyear,
-             df1[df1['MESS_DATUM'].dt.year == least_year]['R1'], label=f'{least_year} with least percipitation')
-    plt.plot(df1[df1['MESS_DATUM'].dt.year == most_year]['MESS_DATUM'].dt.dayofyear,
-             df1[df1['MESS_DATUM'].dt.year == most_year]['R1'], label=f'{most_year} with most percipitation')
+    plt.plot(df1[df1.index.year == least_year]['MESS_DATUM'].dt.dayofyear,
+             df1[df1.index.year == least_year]['R1'], label=f'{least_year} with least percipitation')
+    plt.plot(df1[df1.index.year == most_year]['MESS_DATUM'].dt.dayofyear,
+             df1[df1.index.year == most_year]['R1'], label=f'{most_year} with most percipitation')
     plt.legend()
     plt.savefig(
         f'visualizations/{df1.index.name}/percipitation_max_and_min.png')
@@ -174,16 +175,16 @@ def _yearly_summed_percipitation(df1, df2, df3):
 def _monthly_summed_precipitation(df1, df2, df3):
     fig, axs = plt.subplots(2, 2, figsize=(7, 7))
     # divide summed yearly percipitation by number of entries to get average
-    monthly_sum1 = df1.groupby(df1['MESS_DATUM'].dt.month).sum(
-    )['R1'] / df1.groupby(df1['MESS_DATUM'].dt.month).count()['R1']
+    monthly_sum1 = df1.groupby(df1.index.month).sum(
+    )['R1'] / df1.groupby(df1.index.month).count()['R1']
     histo1 = sns.lineplot(monthly_sum1, color='blue', ax=axs[0, 0], legend=True, label='Test')
     histo1.legend([df1.index.name])
     histo1.xaxis.set_major_locator(ticker.MultipleLocator(1))
     histo1.set(xlabel=None)
     histo1.set(ylabel='Precipitation (mm)')
     
-    monthly_sum2 = df2.groupby(df2['MESS_DATUM'].dt.month).sum(
-    )['R1'] / df2.groupby(df2['MESS_DATUM'].dt.month).count()['R1']
+    monthly_sum2 = df2.groupby(df2.index.month).sum(
+    )['R1'] / df2.groupby(df2.index.month).count()['R1']
     histo2 = sns.lineplot(monthly_sum2, color='red', ax=axs[0, 1])
     histo2.legend([df2.index.name])
     histo2.xaxis.set_major_locator(ticker.MultipleLocator(1))
@@ -192,8 +193,8 @@ def _monthly_summed_precipitation(df1, df2, df3):
 
     
 
-    monthly_sum3 = df3.groupby(df3['MESS_DATUM'].dt.month).sum(
-    )['R1'] / df3.groupby(df3['MESS_DATUM'].dt.month).count()['R1']
+    monthly_sum3 = df3.groupby(df3.index.month).sum(
+    )['R1'] / df3.groupby(df3.index.month).count()['R1']
     histo3 = sns.lineplot(monthly_sum3, color='green', ax=axs[1, 0])
     histo3.legend([df3.index.name])
     histo3.xaxis.set_major_locator(ticker.MultipleLocator(1))
