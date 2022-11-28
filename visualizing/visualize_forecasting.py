@@ -5,9 +5,6 @@ from pathlib import Path
 from matplotlib import pyplot as plt
 
 
-def visuzalize_forecasting(df1, df2, df3):
-    Path("visualizations/forecasting").mkdir(parents=True, exist_ok=True)
-
 def plot_linear_regression(df, slope, intercept, predictions, y):
     f, ax = plt.subplots()
     f.set_size_inches(20, 8)

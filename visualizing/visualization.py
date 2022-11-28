@@ -14,11 +14,6 @@ def print_stats(name, df):
 
 def visualize_data(df1, df2, df3, show=False):
     print('Visualizing data...')
-    Path("visualizations").mkdir(parents=True, exist_ok=True)
-    Path("visualizations/Oldenburg").mkdir(parents=True, exist_ok=True)
-    Path("visualizations/Munich").mkdir(parents=True, exist_ok=True)
-    Path("visualizations/Berlin").mkdir(parents=True, exist_ok=True)
-    Path("visualizations/combined").mkdir(parents=True, exist_ok=True)
     _precipitation_distribution(df1, df2, df3)
     _monthly_summed_precipitation(df1, df2, df3)
     _visualize_full_data(df1)

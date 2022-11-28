@@ -1,11 +1,11 @@
 from pandas import DataFrame
 from preprocessing.clean_data import sum_up_to_days
 from sklearn.linear_model import LinearRegression
-from matplotlib import pyplot as plt
 
 from visualizing.visualize_forecasting import plot_linear_regression
 
 def linear_regression(df1, df2, df3):
+    print('Calculating linear regression...')
     df1 = sum_up_to_days(df1)
     df2 = sum_up_to_days(df2)
     df3 = sum_up_to_days(df3)

@@ -1,3 +1,4 @@
+from correlation.pearson import correlation
 from forecasting.arma import arma
 from forecasting.dl.train import lstm
 from forecasting.linear_regression import linear_regression
@@ -26,6 +27,7 @@ if debug:
 # arma(oldenburg_df)
 # linear_regression(oldenburg_df, berlin_df, munich_df)
 # visualize_data(oldenburg_df, berlin_df, munich_df)
+correlation(oldenburg_df, berlin_df, munich_df)
 
 
 

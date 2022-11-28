@@ -16,6 +16,9 @@ def preprocess(df1, df2, df3):
     df1 = _interpolate_missing_hours(df1)
     df2 = _interpolate_missing_hours(df2)
     df3 = _interpolate_missing_hours(df3)
+    df1.index.name = 'Oldenburg'
+    df2.index.name = 'Berlin'
+    df3.index.name = 'Munich'
     return df1, df2, df3
 
 
