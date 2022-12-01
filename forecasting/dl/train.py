@@ -15,6 +15,7 @@ learning_rate = 1e-3
 num_hidden_units = 16
 batch_size = 32
 def lstm(d1):
+    print("Training LSTM model...")
     # split df1 into 20/80 datasets
     train_size = int(len(d1) * 0.8)
     train, test = d1.iloc[0:train_size], d1.iloc[train_size:len(d1)]

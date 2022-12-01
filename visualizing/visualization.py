@@ -40,15 +40,14 @@ def _visualize_full_data(df, show=False):
 
 def _visualize_data_years_seperated(df, show=False):
     # get the first and last row of the dataframe
-    first_year = df.iloc[0].index
-    print('index', first_year)
-    last_year = df.iloc[-1].index.year
+    first_year = 1998
+    last_year = 2011
     min_year, max_year = _get_year_with_least_and_most_precipitation(df)
     for year in range(first_year, last_year):
         plt.xlabel('Date')
         plt.ylabel('Precipitation in mm')
         plt.title(f'Precipitation in mm in {df.index.name} in {year}')
-        plt.plot(df[df.index.year == year]['MESS_DATUM'],
+        plt.plot(df[df.index.year == year].index,
                  df[df.index.year == year]['R1'])
         if show:
             plt.show()
@@ -67,9 +66,9 @@ def _overlay_year_with_least_and_most_percipitation(df1, least_year, most_year):
     plt.xlabel('Date')
     plt.ylabel('Precipitation in mm')
     plt.title(f'Precipitation in mm in {df1.index.name}')
-    plt.plot(df1[df1.index.year == least_year]['MESS_DATUM'].dt.dayofyear,
+    plt.plot(df1[df1.index.year == least_year].index.dayofyear,
              df1[df1.index.year == least_year]['R1'], label=f'{least_year} with least percipitation')
-    plt.plot(df1[df1.index.year == most_year]['MESS_DATUM'].dt.dayofyear,
+    plt.plot(df1[df1.index.year == most_year].index.dayofyear,
              df1[df1.index.year == most_year]['R1'], label=f'{most_year} with most percipitation')
     plt.legend()
     plt.savefig(
@@ -79,14 +78,14 @@ def _overlay_year_with_least_and_most_percipitation(df1, least_year, most_year):
 
 def _get_year_with_least_and_most_precipitation(df):
     # get the first and last row of the dataframe
-    fist_year = df.iloc[0]['MESS_DATUM'].year
-    last_year = df.iloc[-1]['MESS_DATUM'].year
+    fist_year = 1998
+    last_year = 2011
     min_year = fist_year
     max_year = fist_year
-    min_year_r1 = df[df['MESS_DATUM'].dt.year == fist_year]['R1'].sum()
-    max_year_r1 = df[df['MESS_DATUM'].dt.year == fist_year]['R1'].sum()
+    min_year_r1 = df[df.index.year == fist_year]['R1'].sum()
+    max_year_r1 = df[df.index.year == fist_year]['R1'].sum()
     for year in range(fist_year, last_year):
-        r1_sum = df[df['MESS_DATUM'].dt.year == year]['R1'].sum()
+        r1_sum = df[df.index.year == year]['R1'].sum()
         if r1_sum < min_year_r1:
             min_year = year
             min_year_r1 = r1_sum
@@ -102,9 +101,9 @@ def _visualize_combined_data(df1, df2, df3, show=False):
     plt.ylabel('Precipitation (mm)')
     plt.title(
         f'Overall precipitation')
-    plt.plot(df1['MESS_DATUM'], df1['R1'], label=df1.index.name, markersize=0.4)
-    plt.plot(df2['MESS_DATUM'], df2['R1'], label=df2.index.name, markersize=0.4)
-    plt.plot(df3['MESS_DATUM'], df3['R1'], label=df3.index.name, markersize=0.4)
+    plt.plot(df1.index, df1['R1'], label=df1.index.name, markersize=0.4)
+    plt.plot(df2.index, df2['R1'], label=df2.index.name, markersize=0.4)
+    plt.plot(df3.index, df3['R1'], label=df3.index.name, markersize=0.4)
     plt.legend()
     plt.tight_layout()
     plt.savefig(f'visualizations/combined/overall_percipitation.png')
@@ -143,25 +142,25 @@ def _precipitation_distribution(df1, df2, df3):
 def _yearly_summed_percipitation(df1, df2, df3):
     fig, axs = plt.subplots(2, 2, figsize=(7, 7))
     # divide summed yearly percipitation by number of entries to get average
-    yearly_sum1 = df1.groupby(df1['MESS_DATUM'].dt.year).sum(
-    )['R1'] / df1.groupby(df1['MESS_DATUM'].dt.year).count()['R1']
+    yearly_sum1 = df1.groupby(df1.index.year).sum(
+    )['R1'] / df1.groupby(df1.index.year).count()['R1']
     histo1 = sns.histplot(yearly_sum1, color='blue',
                           stat='percent', ax=axs[0, 0], legend=True)
     histo1.legend([df1.index.name])
     histo1.set(xlabel='Precipitation (mm/day)')
-    yearly_sum2 = df2.groupby(df2['MESS_DATUM'].dt.year).sum(
-    )['R1'] / df2.groupby(df2['MESS_DATUM'].dt.year).count()['R1']
+    yearly_sum2 = df2.groupby(df2.index.year).sum(
+    )['R1'] / df2.groupby(df2.index.year).count()['R1']
     histo2 = sns.histplot(yearly_sum2, color='red',
                           stat='percent', ax=axs[0, 1])
     histo2.legend([df2.index.name])
     histo2.set(xlabel='Precipitation (mm/day)')
-    yearly_sum3 = df3.groupby(df3['MESS_DATUM'].dt.year).sum(
-    )['R1'] / df3.groupby(df3['MESS_DATUM'].dt.year).count()['R1']
+    yearly_sum3 = df3.groupby(df3.index.year).sum(
+    )['R1'] / df3.groupby(df3.index.year).count()['R1']
     histo3 = sns.histplot(yearly_sum3, color='green', stat='percent', ax=axs[1, 0])
     histo3.legend([df3.index.name])
     histo3.set(xlabel='Precipitation (mm/day)')
-    concat_df = pd.concat([df1.groupby(df1['MESS_DATUM'].dt.year)['R1'].sum().rename(df1.index.name), df2.groupby(df2['MESS_DATUM'].dt.year)[
-                          'R1'].sum().rename(df2.index.name), df3.groupby(df3['MESS_DATUM'].dt.year)['R1'].sum().rename(df3.index.name)], axis=1).reset_index()
+    concat_df = pd.concat([df1.groupby(df1.index.year)['R1'].sum().rename(df1.index.name), df2.groupby(df2.index.year)[
+                          'R1'].sum().rename(df2.index.name), df3.groupby(df3.index.year)['R1'].sum().rename(df3.index.name)], axis=1).reset_index()
 
     histo4 = sns.histplot((concat_df['Oldenburg'], concat_df['Munich'],
                           concat_df['Berlin']), stat='percent', ax=axs[1, 1], legend=True)
