@@ -41,7 +41,7 @@ def lstm(d1):
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 
-    if not path.exists('output/models/lstm'):
+    if not path.exists('data/forecasting/models/lstm'):
         print("Untrained test\n--------")
         test_model(test_loader, model, loss_function)
         print()
@@ -52,7 +52,7 @@ def lstm(d1):
             # test_model(test_loader, model, loss_function)
             print()
 
-        torch.save(model.state_dict(), f"output/models/lstm")
+        torch.save(model.state_dict(), f"data/forecasting/models/lstm")
 
     model.load_state_dict(torch.load(f"data/forecasting/models/lstm"))
     train_eval_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
@@ -67,7 +67,6 @@ def lstm(d1):
     for c in df_out.columns:
         df_out[c] = df_out[c] * target_stdev + target_mean
 
-    print(df_out)
     # save df_out to csv
     df_out.to_csv('data/forecasting/lstm_out.csv')
 
@@ -99,8 +98,7 @@ def test_model(data_loader, model, loss_function):
     model.eval()
     with torch.no_grad():
         for X, y in data_loader:
-            # print(X.dtype)
-            # print(y.dtype)
+
             # covert dtype of y to double
             y = y.double()
             X = X.double()
@@ -116,10 +114,21 @@ def predict(data_loader, model):
     model.eval()
     with torch.no_grad():
         for X, _ in data_loader:
+            print(X.dtype)
+            print(X.shape)
+            print(X)
             y_star = model(X)
             output = torch.cat((output, y_star), 0)
     
     return output
+
+def predict_precip_for_date(date: pd.Timestamp):
+    model = ShallowRegressionLSTM(num_features=3, hidden_units=num_hidden_units).double()
+    model.load_state_dict(torch.load(f"data/forecasting/models/lstm"))
+
+    date_tensor = torch.tensor([[[date.year, date.month, date.day_of_year]]])
+    prediction = model(date_tensor)
+    return round(prediction.item(), 4)
 
 
     
