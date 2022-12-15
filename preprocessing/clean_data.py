@@ -19,6 +19,7 @@ def preprocess(df1, df2, df3):
     df1.index.name = 'Oldenburg'
     df2.index.name = 'Berlin'
     df3.index.name = 'Munich'
+    _save_data(df1, df2, df3)
     return df1, df2, df3
 
 
@@ -61,3 +62,8 @@ def _interpolate_missing_hours(df1):
 def sum_up_to_days(df1):
     df1 = df1.resample('D').sum()
     return df1
+
+def _save_data(oldenburg_df, berlin_df, munich_df):
+    oldenburg_df.to_csv('data/processed/oldenburg.csv')
+    berlin_df.to_csv('data/processed/berlin.csv')
+    munich_df.to_csv('data/processed/munich.csv')

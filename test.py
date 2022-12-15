@@ -1,7 +1,7 @@
 # example dash app
 
-import dash
-from dash import html, dcc, Output, Input
+import dashboard
+from dashboard import html, dcc, Output, Input
 import plotly.express as px
 import seaborn as sns
 
@@ -13,7 +13,7 @@ df = px.data.iris()
 fig = px.scatter(df, x="sepal_width", y="sepal_length", color="species", size='petal_length', hover_data=['petal_width'])
 
 
-app = dash.Dash(__name__)
+app = dashboard.Dash(__name__)
 
 app.layout = html.Div(children=[
     html.H1(children='Hello Dash'),
@@ -25,7 +25,7 @@ app.layout = html.Div(children=[
     ),
     html.Div(children='''
         Dash: A web application framework for Python.
-    '''),
+    '''),x
 
     dcc.Graph(
         id='example-graph',

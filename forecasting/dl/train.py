@@ -54,7 +54,7 @@ def lstm(d1):
 
         torch.save(model.state_dict(), f"output/models/lstm")
 
-    model.load_state_dict(torch.load(f"output/models/lstm"))
+    model.load_state_dict(torch.load(f"data/forecasting/models/lstm"))
     train_eval_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
 
     ystar_col = "Model forecast"
@@ -69,7 +69,7 @@ def lstm(d1):
 
     print(df_out)
     # save df_out to csv
-    df_out.to_csv('output/lstm_out.csv')
+    df_out.to_csv('data/forecasting/lstm_out.csv')
 
 def train_model(data_loader, model, loss_function, optimizer):
     num_batches = len(data_loader)

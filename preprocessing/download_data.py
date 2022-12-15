@@ -32,22 +32,22 @@ def _download_file(url, file_name):
 def _unzip_files():
     # unzip oldenburg.zip to oldenburg folder
     with zipfile.ZipFile("oldenburg.zip", 'r') as zip_ref:
-        zip_ref.extractall("./data/oldenburg")
+        zip_ref.extractall("./data/raw/oldenburg")
     os.remove("oldenburg.zip")
 
     with zipfile.ZipFile("munich.zip", 'r') as zip_ref:
-        zip_ref.extractall("./data/munich")
+        zip_ref.extractall("./data/raw/munich")
     os.remove("munich.zip")
 
     with zipfile.ZipFile("berlin.zip", 'r') as zip_ref:
-        zip_ref.extractall("./data/berlin")
+        zip_ref.extractall("./data/raw/berlin")
     os.remove("berlin.zip")
 
 def _create_dataframes():
     # create dataframes
-    oldenburg_df = pd.read_csv('./data/oldenburg/produkt_rr_stunde_19950901_20110801_00399.txt', sep=';')
-    munich_df = pd.read_csv('./data/munich/produkt_rr_stunde_19970707_20211231_03379.txt', sep=';')
-    berlin_df = pd.read_csv('./data/berlin/produkt_rr_stunde_19980930_20121001_03791.txt', sep=';')
+    oldenburg_df = pd.read_csv('./data/raw/oldenburg/produkt_rr_stunde_19950901_20110801_00399.txt', sep=';')
+    munich_df = pd.read_csv('./data/raw/munich/produkt_rr_stunde_19970707_20211231_03379.txt', sep=';')
+    berlin_df = pd.read_csv('./data/raw/berlin/produkt_rr_stunde_19980930_20121001_03791.txt', sep=';')
     # remove whitespace from df column names
     oldenburg_df.columns = oldenburg_df.columns.str.strip()
     munich_df.columns = munich_df.columns.str.strip()
