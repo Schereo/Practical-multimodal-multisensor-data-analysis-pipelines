@@ -3,13 +3,13 @@
 from matplotlib import pyplot as plt
 from numpy import ndarray
 from pandas import DataFrame
+import numpy as np
 
 
-def visualize_optimal_cluster(spring: DataFrame, summer: DataFrame, autumn: DataFrame, winter: DataFrame, data_name: str):
-    plt.scatter(spring.index, spring['R1'], label='spring')
-    plt.scatter(summer.index, summer['R1'], label='summer')
-    plt.scatter(autumn.index, autumn['R1'], label='autumn')
-    plt.scatter(winter.index, winter['R1'], label='winter')
+def visualize_optimal_cluster(df1: DataFrame, data_name: str):
+    for g in np.unique(df1['cluster']):
+        i = np.where(df1['cluster'] == g)
+        plt.scatter(df1.iloc[i].index, df1.iloc[i]['R1'], label=g)
     plt.xlabel('Year')
     plt.ylabel('Precipitation (mm)')
     plt.title(f'Optimal clustering in different seasons for {data_name}')

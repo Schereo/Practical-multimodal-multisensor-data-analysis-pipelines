@@ -3,6 +3,7 @@ from pandas import DataFrame
 import pandas as pd
 import plotly.express as px
 import seaborn as sns
+from clustering.clustering import cluster
 from forecasting.dl.train import predict_precip_for_date
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -16,33 +17,47 @@ def setup_layout():
                                  + create_daily_histogram_figure()
                                  + create_regression()
                                  + create_correlation()
+                                 + create_clustering()
                                  + create_dl_forecasting())
 
 
 def introductory_text():
     heading = html.H1(children='Precipitation Data Dashboard')
     introduction = html.P(children='''
-        This is a dashboard for precipitation data of Oldenburg, Berlin, and Munich. This dashboard is created for the course Practical Multimodal Multisensor Data Analysis Pipelines.
+        This is a dashboard for precipitation data of Oldenburg, Berlin, and Munich. This dashboard is created for the course Practical Multimodal Multisensor Data Analysis Pipelines. The data is analyzed in the following steps:
     ''')
-    return [heading, introduction]
+    table_of_contents = html.Ul(children=[
+        html.Li(children='Daily precipitation'),
+        html.Li(children='Daily precipitation histogram'),
+        html.Li(children='Regression'),
+        html.Li(children='Correlation'),
+        html.Li(children='Clustering'),
+        html.Li(children='Deep learning forecasting')
+    ])
+    return [heading, introduction, table_of_contents]
 
 
 def read_data():
+    global oldenburg_df, berlin_df, munich_df
     oldenburg_df = pd.read_csv('data/processed/oldenburg.csv', index_col=0)
-    oldenburg_df.rename(columns={'R1': 'Oldenburg'}, inplace=True)
     oldenburg_df.index = pd.to_datetime(oldenburg_df.index)
     oldenburg_df = sum_up_to_days(oldenburg_df)
+    renamed_oldenburg_df = oldenburg_df.rename(
+        columns={'R1': 'Oldenburg'}, inplace=False)
     berlin_df = pd.read_csv('data/processed/berlin.csv', index_col=0)
-    berlin_df.rename(columns={'R1': 'Berlin'}, inplace=True)
     berlin_df.index = pd.to_datetime(berlin_df.index)
     berlin_df = sum_up_to_days(berlin_df)
+    renamed_berlin_df = berlin_df.rename(
+        columns={'R1': 'Berlin'}, inplace=False)
     munich_df = pd.read_csv('data/processed/munich.csv', index_col=0)
-    munich_df.rename(columns={'R1': 'Munich'}, inplace=True)
     munich_df.index = pd.to_datetime(munich_df.index)
     munich_df = sum_up_to_days(munich_df)
+    renamed_munich_df = munich_df.rename(
+        columns={'R1': 'Munich'}, inplace=False)
 
     global combined_df
-    combined_df = pd.concat([oldenburg_df, berlin_df, munich_df], axis=1)
+    combined_df = pd.concat(
+        [renamed_oldenburg_df, renamed_berlin_df, renamed_munich_df], axis=1)
     global oldenburg_prediction_df
     oldenburg_prediction_df = pd.read_csv(
         'data/forecasting/lstm_out.csv', index_col=0)
@@ -52,19 +67,32 @@ def read_data():
         oldenburg_prediction_df.index)
     oldenburg_prediction_df = sum_up_to_days(oldenburg_prediction_df)
 
-    global pearson_correlation_df 
-    pearson_correlation_df = pd.read_csv('data/correlation/pearson.csv', index_col=0)
+    global pearson_correlation_df
+    pearson_correlation_df = pd.read_csv(
+        'data/correlation/pearson.csv', index_col=0)
 
     global rolling_pearson_berlin_munich_df, rolling_pearson_berlin_oldenburg_df, rolling_pearson_munich_oldenburg_df
-    rolling_pearson_berlin_munich_df = pd.read_csv('data/correlation/rolling_pearson_Berlin_Munich.csv', index_col=0)
-    rolling_pearson_berlin_munich_df.index = pd.to_datetime(rolling_pearson_berlin_munich_df.index)
-    rolling_pearson_berlin_munich_df = rolling_pearson_berlin_munich_df.resample('D').mean()
-    rolling_pearson_berlin_oldenburg_df = pd.read_csv('data/correlation/rolling_pearson_Oldenburg_Berlin.csv', index_col=0)
-    rolling_pearson_berlin_oldenburg_df.index = pd.to_datetime(rolling_pearson_berlin_oldenburg_df.index)
-    rolling_pearson_berlin_oldenburg_df = rolling_pearson_berlin_oldenburg_df.resample('D').mean()
-    rolling_pearson_munich_oldenburg_df = pd.read_csv('data/correlation/rolling_pearson_Oldenburg_Munich.csv', index_col=0)
-    rolling_pearson_munich_oldenburg_df.index = pd.to_datetime(rolling_pearson_munich_oldenburg_df.index)
-    rolling_pearson_munich_oldenburg_df = rolling_pearson_munich_oldenburg_df.resample('D').mean()
+    rolling_pearson_berlin_munich_df = pd.read_csv(
+        'data/correlation/rolling_pearson_Berlin_Munich.csv', index_col=0)
+    rolling_pearson_berlin_munich_df.index = pd.to_datetime(
+        rolling_pearson_berlin_munich_df.index)
+    rolling_pearson_berlin_munich_df = rolling_pearson_berlin_munich_df.resample(
+        'D').mean()
+    rolling_pearson_berlin_oldenburg_df = pd.read_csv(
+        'data/correlation/rolling_pearson_Oldenburg_Berlin.csv', index_col=0)
+    rolling_pearson_berlin_oldenburg_df.index = pd.to_datetime(
+        rolling_pearson_berlin_oldenburg_df.index)
+    rolling_pearson_berlin_oldenburg_df = rolling_pearson_berlin_oldenburg_df.resample(
+        'D').mean()
+    rolling_pearson_munich_oldenburg_df = pd.read_csv(
+        'data/correlation/rolling_pearson_Oldenburg_Munich.csv', index_col=0)
+    rolling_pearson_munich_oldenburg_df.index = pd.to_datetime(
+        rolling_pearson_munich_oldenburg_df.index)
+    rolling_pearson_munich_oldenburg_df = rolling_pearson_munich_oldenburg_df.resample(
+        'D').mean()
+
+    global optimal_cluster, agglomerative_cluster
+    optimal_cluster, agglomerative_cluster = cluster(oldenburg_df)
 
 
 def create_daily_precipitation_figure():
@@ -164,8 +192,10 @@ def create_regression():
     )
     return [heading, description, city_dropdown, resolution_dropdown, regression_type_dropdown, rolling_window, graph]
 
+
 def create_correlation():
     heading = html.H2(children='Correlation')
+    heading_2 = html.H3(children='Global Pearson Correlation')
     description_1 = html.P(
         children='A global pearson correlation matrix was created to see if there is a correlation between the precipitation of the cities. The correlation between the cities is minimal / not existing.')
     graph_1 = dcc.Graph(
@@ -173,18 +203,61 @@ def create_correlation():
         figure=px.imshow(pearson_correlation_df, labels={
             'x': 'City', 'y': 'City', 'color': 'Pearson Correlation'}, text_auto=True)
     )
+    heading_3 = html.H3(children='Rolling Pearson Correlation')
     description_2 = html.P(
-        children='Also a rolling pearson correlation with a window of 30h was calculated to see if there is a time based correlation between the precipitation of the cities. The correlation between the cities is at specific times close to 1 but rather often close to 0.')
-    fig = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.1)
-    fig.add_trace(go.Scatter(x=rolling_pearson_berlin_munich_df.index, y=rolling_pearson_berlin_munich_df['Correlation'], name='Berlin & Munich'), row=1, col=1)
-    fig.add_trace(go.Scatter(x=rolling_pearson_berlin_oldenburg_df.index, y=rolling_pearson_berlin_oldenburg_df['Correlation'], name='Berlin & Oldenburg'), row=2, col=1)
-    fig.add_trace(go.Scatter(x=rolling_pearson_munich_oldenburg_df.index, y=rolling_pearson_munich_oldenburg_df['Correlation'], name='Munich & Oldenburg'), row=3, col=1)
+        children='Also a rolling pearson correlation with a window of 30h was calculated to see if there is a time based correlation between the precipitation of the cities. The correlation between the cities is at specific times close to 1 but rather often close to 0. In comparison to the global pearson correlation the rolling windows correlation is at certain time intervals much more related.')
+    fig = make_subplots(rows=3, cols=1, shared_xaxes=True,
+                        vertical_spacing=0.1)
+    fig.add_trace(go.Scatter(x=rolling_pearson_berlin_munich_df.index,
+                  y=rolling_pearson_berlin_munich_df['Correlation'], name='Berlin & Munich'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=rolling_pearson_berlin_oldenburg_df.index,
+                  y=rolling_pearson_berlin_oldenburg_df['Correlation'], name='Berlin & Oldenburg'), row=2, col=1)
+    fig.add_trace(go.Scatter(x=rolling_pearson_munich_oldenburg_df.index,
+                  y=rolling_pearson_munich_oldenburg_df['Correlation'], name='Munich & Oldenburg'), row=3, col=1)
     fig.update_layout(height=900)
     graph_2 = dcc.Graph(
         id='rolling-correlation-plot',
         figure=fig
     )
-    return [heading, description_1, graph_1, description_2, graph_2]
+    return [heading, description_1, heading_2, graph_1, heading_3, description_2, graph_2]
+
+
+def create_clustering():
+    heading = html.H2(children='Clustering')
+    description_1 = html.P(
+        children='First a optimal clusters for the seasons where identified manually (spring, summer, autumn, winter). Then the yearly precipitation was clustered into these seasons. The yearly precipitation was clustered into 4 clusters. Than the agglomerative clustering algorithm was used to cluster the same data. The identified clusters matched the manually identified clusters partially. The winter season could not be identified by the algorithm.'
+    )
+    city_dropdown = html.Div([
+        html.P('City'),
+        dcc.Dropdown(
+            id='cluster-city-dropdown',
+            options=['Oldenburg', 'Berlin', 'Munich'],
+            value='Oldenburg',
+            multi=False,
+            clearable=False
+        )])
+    years = [str(year) for year in range(1999, 2011)]
+    clustering_year_dropdown = html.Div([
+        html.P('Year'),
+        dcc.Dropdown(
+            id='cluster-year-dropdown',
+            options=[{'label': year, 'value': year} for year in years],
+            value=years[0],
+            multi=False,
+            clearable=False
+        )])
+    heading_2 = html.H3(children='Optimal Clustering')
+    graph_1 = dcc.Graph(
+        id='optimal-clustering-plot',
+        figure=px.scatter(optimal_cluster, x=optimal_cluster.index, y=optimal_cluster.columns, labels={
+            'value': 'Precipitation in mm', 'variable': 'City', 'index': 'Date'}, color='cluster')
+    )
+    heading_3 = html.H3(children='Agglomerative Clustering')
+    graph_2 = dcc.Graph(
+        id='agglomerative-clustering-plot',
+        figure=px.scatter(agglomerative_cluster, x=agglomerative_cluster.index, y=agglomerative_cluster.columns, labels={
+            'value': 'Precipitation in mm', 'variable': 'City', 'index': 'Date'}, color='cluster'))
+    return [heading, city_dropdown, clustering_year_dropdown, heading_2, description_1, graph_1, heading_3, graph_2]
 
 
 def create_dl_forecasting():
@@ -263,6 +336,30 @@ def update_regression(city, resolution, regression_type, rolling_window):
         # results = px.get_trendline_results(fig)
         # print(results)
         return fig, True
+
+
+@precip_app.callback(
+    Output(component_id='optimal-clustering-plot',
+           component_property='figure'),
+    Output(component_id='agglomerative-clustering-plot',
+           component_property='figure'),
+    Input(component_id='cluster-year-dropdown', component_property='value'),
+    Input(component_id='cluster-city-dropdown', component_property='value')
+)
+def update_clustering(year, city):
+    # print('oldenburg_df', oldenburg_df.head())
+    if city == 'Oldenburg':
+        optimal_cluster, agglomerative_cluster = cluster(oldenburg_df, year)
+    elif city == 'Munich':
+        optimal_cluster, agglomerative_cluster = cluster(munich_df, year)
+    else:
+        optimal_cluster, agglomerative_cluster = cluster(berlin_df, year)
+
+    fig_1 = px.scatter(optimal_cluster, x=optimal_cluster.index, y=optimal_cluster.columns, labels={
+        'value': 'Precipitation in mm', 'variable': 'City', 'index': 'Date'}, color='cluster')
+    fig_2 = px.scatter(agglomerative_cluster, x=agglomerative_cluster.index, y=agglomerative_cluster.columns, labels={
+        'value': 'Precipitation in mm', 'variable': 'City', 'index': 'Date'}, color='cluster')
+    return fig_1, fig_2
 
 
 @precip_app.callback(
