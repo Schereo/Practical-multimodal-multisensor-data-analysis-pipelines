@@ -5,8 +5,9 @@ Code for the module `inf 378 Practical multimodal-multisensor data analysis pipe
 - Python 3.9 or higher
 - Install requirements with `pip install -r requirements.txt`
 ## Usage
-- Run all scripts `python3 main.py`
-- Run a specific script `python3 main.py [--lstm] [--regression] [--correlation]`
+- Run all scripts `python3 run.py`
+- Run a specific script `python3 run.py [--lstm] [--regression] [--correlation] [--cluster]`
+- **To run the dashboard, make sure to first run the command above and afterwards** `python3 dashboard.py`
 ## Description of variables
 
 - STATIONS_ID: ID of the station
