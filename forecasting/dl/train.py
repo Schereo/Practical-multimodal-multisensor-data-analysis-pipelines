@@ -10,9 +10,9 @@ from torch.utils.data import DataLoader
 from forecasting.dl.lstm import ShallowRegressionLSTM
 
 i = 2
-sequence_length = 10
+sequence_length = 5
 learning_rate = 1e-3
-num_hidden_units = 16
+num_hidden_units = 5
 batch_size = 32
 def lstm(d1):
     print("Training LSTM model...")
@@ -78,9 +78,7 @@ def train_model(data_loader, model, loss_function, optimizer):
     for X, y in data_loader:
 
         output = model(X)
-        # print(output.dtype)
         loss = loss_function(output, y)
-        # print(loss.dtype)
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -114,9 +112,6 @@ def predict(data_loader, model):
     model.eval()
     with torch.no_grad():
         for X, _ in data_loader:
-            print(X.dtype)
-            print(X.shape)
-            print(X)
             y_star = model(X)
             output = torch.cat((output, y_star), 0)
     

@@ -17,14 +17,8 @@ from visualizing.visualize_clustering import visualize_agglomerative_clustering,
 
 def cluster(df1: DataFrame, year = 2005) -> Tuple[DataFrame, DataFrame]:
     print("Running clustering...")
-    # convert year to int
     year = int(year)
-    # print datatype of year
-    # 
-    # get rows of df1 with year == year
-
-    print(type(year))
-    print(df1.index.year)
+    df1.index = pd.to_datetime(df1.index)
     df1 = df1.loc[df1.index.year == year]
     # print(df1.head())
     optimal_df = _optimal_seasonal_clustering(df1)

@@ -54,6 +54,7 @@ def _trim_data_to_same_time(df1, df2, df3):
 def _interpolate_missing_hours(df1):
     df1 = df1[['MESS_DATUM', 'R1']]
     df1.index = df1['MESS_DATUM']
+    df1.index = pd.to_datetime(df1.index)
     del df1['MESS_DATUM']
     df1 = df1.resample('H').mean()
     df1['R1'] = df1['R1'].interpolate() # interpolate missing values linearly

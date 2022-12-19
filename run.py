@@ -50,10 +50,9 @@ elif args.correlation:
 elif args.cluster:
     cluster(oldenburg_df)
 else:
-    pass
-    # lstm(oldenburg_df) 
-    # linear_regression(oldenburg_df, berlin_df, munich_df)
-    # visualize_data(oldenburg_df, berlin_df, munich_df)
-    # correlation(oldenburg_df, berlin_df, munich_df)
-    # cluster(oldenburg_df)
+    lstm(oldenburg_df) 
+    linear_regression(oldenburg_df, berlin_df, munich_df)
+    visualize_data(oldenburg_df, berlin_df, munich_df)
+    correlation(oldenburg_df, berlin_df, munich_df)
+    cluster(oldenburg_df)
 

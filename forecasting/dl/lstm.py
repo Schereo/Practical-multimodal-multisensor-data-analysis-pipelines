@@ -23,9 +23,6 @@ class ShallowRegressionLSTM(nn.Module):
         h0 = torch.zeros(self.num_layers, batch_size, self.hidden_units, dtype=torch.float64).requires_grad_()
         c0 = torch.zeros(self.num_layers, batch_size, self.hidden_units, dtype=torch.float64).requires_grad_()
         x = x.double()
-        # print('x', x.dtype)
-        # print('h0', h0.dtype)
-        # print('c0', c0.dtype)
         _, (hn, _) = self.lstm(x, (h0, c0))
         out = self.linear(hn[0]) # First dim of Hn is num_layers, which is set to 1 above.
         out = self.out(out).flatten()

@@ -7,7 +7,7 @@ import pandas as pd
 
 def get_data():
     # check if folder exists
-    if not os.path.exists('./data'):
+    if not os.path.exists('./data/raw'):
         _download_data()
         _unzip_files()
     else:
